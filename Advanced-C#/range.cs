@@ -4,46 +4,41 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+
+
+using System;
+
 namespace Advanced_C_
 {
-    internal class Range<T> where T : IComparable<T>
+    public class Range<T> where T : IComparable<T>, IConvertible
     {
-        public T Max {  get; set; }
-        public T Min { get; set; }
+        public T Min { get; }
+        public T Max { get; }
 
         public Range(T min, T max)
+        {
+            if (min.CompareTo(max) > 0)
+                throw new ArgumentException("Min must be less than or equal to Max.");
 
+            Min = min;
+            Max = max;
+        }
 
-        {  Max = min; Min = max; }
-
-        public bool Contains(T value)
+        public bool IsInRange(T value)
         {
             return value.CompareTo(Min) >= 0 && value.CompareTo(Max) <= 0;
         }
 
-
         public double Length()
         {
-            if (Min is ValueType)
-            {
-                var minConv = Min as IConvertible;
-                var maxConv = Max as IConvertible;
-
-                if (minConv != null && maxConv != null)
-                {
-                    double minValue = minConv.ToDouble(null);
-                    double maxValue = maxConv.ToDouble(null);
-                    return maxValue - minValue;
-                }
-            }
-
-            throw new NotSupportedException("Length is only supported for numeric types.");
+            double minValue = Min.ToDouble(null);
+            double maxValue = Max.ToDouble(null);
+            return maxValue - minValue;
         }
 
         public override string ToString()
         {
             return $"[{Min} - {Max}]";
         }
-
     }
 }
